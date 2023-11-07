@@ -139,7 +139,9 @@ Afterwards:
 We will have the same layout and program structure, but we will rather use alerts to 
 control the generations_count.
 Also we can partition the shared global array and attribut to each partition a semaphore
-to not block the read write operation too long.
+to not block the read write operation too long. Also we can make sure that the process wont
+wait for each other by making the alarm waiting time diffrent (incremental) from one process 
+to another
 
 
 
