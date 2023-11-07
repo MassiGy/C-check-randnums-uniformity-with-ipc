@@ -1,0 +1,31 @@
+Here are some online ressources to learn about, IPC (inter process communication), shared memory 
+and semaphors following the POSIX standards.
+
+
+Links: 
+
+Vidéo:
+
+https://www.youtube.com/watch?v=vU2HDf5ZhO4
+
+
+Text books and readings:
+
+
+https://en.wikipedia.org/wiki/Inter-process_communication
+https://opensource.com/downloads/guide-inter-process-communication-linux
+https://www.geeksforgeeks.org/inter-process-communication-ipc/
+https://www.guru99.com/inter-process-communication-ipc.html
+https://www.geeksforgeeks.org/inter-process-communication-ipc/
+https://www.javatpoint.com/ipc-through-shared-memory
+https://www.tutorialspoint.com/inter_process_communication/inter_process_communication_quick_guide.htm
+https://linuxhint.com/posix-shared-memory-c-programming/
+
+
+Code based: 
+
+https://github.com/mansurmuaz/Processes-Threads-and-IPC-in-C
+https://stackoverflow.com/questions/44111607/how-to-create-ipc-interprocess-communication-c-programme-to-create-with-two-ch
+
+
+
