@@ -1,0 +1,147 @@
+This file will lay down the outline of the project. We will explain and brainstorm about how 
+this project should be implemented.
+
+
+We know that the main idea is: 
+
+- Init an array with a preset length (Maybe RAND_MAX elements should do it);
+- Init semaphores for read and write operation upon this array.
+- Spawn a set of child process that will receive the same array as a shared memory blob
+and have their own copy of the shared array upon which they perform and track the random generation
+of values. The global shared array is there to export the result of the generation;
+- Once the child exported the results, this one will redo the work until a number of generations is 
+met.
+- Write a uniformity_check function that will check the uniformity of the data generation after all 
+spawned process exported their values, given a standard diviation.
+- Test & optimize.
+- Test with a diffrent random generator.
+
+
+As you can see, the tricky parts are: 
+
+- How to manage shared memory related read write operations.
+- How to proprely set the generation duration equally for all spwaned processes.
+- How to check for uniformity given a standard deviation (require some math) .
+- How to make it agnostic regarding the random generator
+
+Some top of the head solutions:
+
+- To manage shared memory, we can set a global semaphore for the globaly shared array. This is the 
+basic idea, and then to make it more efficient we can set a semaphore for partitions of the global
+share array. This way two spawned process can write at the same time if they are delayed.
+- To proprely set the generation duration, we can set an alarm upon each spawned process start.
+- To check for uniformity given a standard deviation, we will study a bit of statistics to do so, but 
+it should be related to the notion of average, so should be bearable.
+- To make our program agnostic, we can set an interface using a header file, this will allow us 
+to have/force the same prototype on the random value generator.
+
+
+What will we do: 
+
+
+In the first place:
+
+#In this global/main process:
+
+
+- Our main/global process, will have an array of lenght RAND_MAX, and a semaphore to handle read
+write operations.
+- We will set some global variables: 
+    * global length variable. READ_ONLY
+    * global rounds_per_generation variable. READ_ONLY
+    * global generations_count variable. READ_ONLY 
+
+- we can also set a define statement to force the prototype of the generator.
+- we will also provide a uniformity_check function that will receive a standard deviation variable.
+
+
+So the idea of the global process is:
+
+    set our global length variable
+    set our global rounds_per_generation
+    set our global generations_count
+    set our global shared array
+    set our global semphore
+    set our global/non-shared sub_process_count
+    set our global inner process communication handler/context
+
+    set our global/non-shared standard deviation value
+
+    @main
+        
+        zero out our global share array
+        init the semaphore
+
+        init a inner process communication handler/context (sort of)
+
+        loop till counter = sub_process_count:
+            
+            fork()
+
+            @sub_procss:
+            if in sub_process:
+                
+                grap and set the IPC handler/context to the global one
+
+                sub_process logic (generations_wrapper_procedure)
+                // maybe we can fork and exec (but we will keep it simple for now)
+            
+
+            @parent_process:
+            continue to fork the next sub_process
+
+
+        after loop 
+
+        init our standard deviation value
+        call uniformity_check upon the global array
+        print out the results
+
+
+        free & destroy the semaphore
+        return and quit
+
+        
+
+#In each sub process:
+
+- We will create a copy of the shared array localy using the global length
+  variable.
+- We will provide a generation procedure that will write to the local array and
+  then after a cycle of generation, meaning after rounds_per_generation are
+  met, we will export to the main shared array.
+- We will also wrap this generation procedure in a simple loop that will run it
+  until the generations_count is met.
+
+So the idea of the sub process is :
+    
+    decalre a local array using the lenght global variable.
+
+    loop till counter = generations_count:
+
+        zero out the local array
+        call generation_proc upon the local array
+
+        post the semaphore
+        export the array content to the share one
+        signal the semaphore
+
+        continue
+
+        
+    return and exit
+
+
+
+
+Afterwards:
+
+We will have the same layout and program structure, but we will rather use alerts to 
+control the generations_count.
+Also we can partition the shared global array and attribut to each partition a semaphore
+to not block the read write operation too long.
+
+
+
+
+
