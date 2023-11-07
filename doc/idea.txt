@@ -1,39 +1,28 @@
+The idea is around Random. This pseudo random number generator is not perfect,
+meaning that it does not garentee uniformity.
 
-The idea is around Random. This pseudo random number generator is not perfect, meaning that it does
-not garentee uniformity.
-
-
-The idea behind this project is to ensure the uniformity of our random number generatror within some
-preset standard deviation.
+The idea behind this project is to ensure the uniformity of our random number
+generatror within some preset standard deviation.
 
 
-To do so, we will laverage the power of multiprocessing and inter process communication to share the
-same address space between 4 or 6 processes. 
+To do so, we will laverage the power of multiprocessing and inter process
+communication to share the same address space between 4 or 6 processes. 
 
-Our shared memory will be an array of number, that should be huge so as the test will be somewhat 
-reliable.
+Our shared memory will be an int array set to 0, that should be huge so as the
+test will be somewhat reliable.
 
-Each process will have a copy of the shared array, and then generate random values and then increment
-the returned value occurence in this local array. Then at the end of the generation, we will write 
-back to the shared array.
+Each process will have a copy of the shared array(same length and zero out),
+and then generate random values and then increment the returned value occurence
+in this local array. Then at the end of the generation, we will write back to
+the shared array.
 
-The real issue is the fact that we need to use semaphores to prevent data race/race conditions.
+The real issue is the fact that we need to use semaphores to prevent data
+race/race conditions.
 
+Then after all the generation phases, we need to find a way to see if our
+number generation is uniform or not.
 
-Then after all the generation phases, we need to find a way to see if our number generation is 
-uniform or not.
-
-
-Also, our implementation should be agnostic of the random function since we will swap it with 
-another one to verify our program at the end.
-
-
-
-
-
-
-
-
-
+Also, our implementation should be agnostic of the random function since we
+will swap it with another one to verify our program at the end.
 
 
