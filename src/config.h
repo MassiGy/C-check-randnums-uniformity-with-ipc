@@ -1,11 +1,3 @@
-#include <stdio.h>
-#include <stdlib.h>
-#include <semaphore.h>
-#include <unistd.h>
-#include <sys/mman.h>
-#include <sys/stat.h>       
-#include <fcntl.h>       
-#include <string.h>
 
 // set our global length variable
 #define ARRAY_LENGTH  8
@@ -14,10 +6,10 @@
 #define ROUNDS_PER_GENERATION  10
 
 // set our global generations_count
-#define GENERATION_COUNT  1
+#define GENERATIONS_COUNT  1
 
 // set our global/non-shared sub_process_count
-#define WORKER_PROCESS_COUNT  1
+#define WORKER_PROCESS_COUNT  2
 
 // set our global inner process communication handler/context
 // in our case, it will be the semaphore name
@@ -27,7 +19,10 @@
 #define BACKING_FILE "/shMemEx"
 
 
-float get_random(int seed, int uppper_bound, int lower_bound);
+// int get_random(int seed, int uppper_bound, int lower_bound);
+
+void rand_nums_freq_analyser(int* freqs_store,int freqs_store_len, int generation_cycles_count);
+
 
 int check_values_uniformity(
     int interval_lower_bound,

@@ -1,6 +1,12 @@
 #include "config.h"
-#include <semaphore.h>
 #include <stdio.h>
+#include <stdlib.h>
+#include <semaphore.h>
+#include <unistd.h>
+#include <sys/mman.h>
+#include <sys/stat.h>       
+#include <fcntl.h>       
+#include <string.h>
 
 // @main
 int main(void){
@@ -46,6 +52,10 @@ int main(void){
       exit(-1);
     }
 
+    sem_wait(global_semaphore);
+    memset(shared_array, 0, ARRAY_LENGTH);
+    sem_post(global_semaphore);
+
     // loop till counter = sub_process_count:
     int pid;
     for (int i = 0; i < WORKER_PROCESS_COUNT; i++) {
@@ -85,6 +95,14 @@ int main(void){
     // print out the results
     // printf("uniformity_check_status is :%d\n", status);
 
+    sleep(5);
+    // print the shared array;
+    sem_wait(global_semaphore);
+    for (int i = 0; i < ARRAY_LENGTH/sizeof(int); i++) {
+        printf("%i ",((int*)shared_array)[i]);
+    }
+    printf("\n");
+    sem_post(global_semaphore);
 
 
     // unmap the shared memory

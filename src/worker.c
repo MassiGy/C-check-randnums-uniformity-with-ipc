@@ -1,8 +1,12 @@
 #include "config.h"
-#include <semaphore.h>
 #include <stdio.h>
-#include <string.h>
+#include <stdlib.h>
+#include <semaphore.h>
+#include <unistd.h>
 #include <sys/mman.h>
+#include <sys/stat.h>       
+#include <fcntl.h>       
+#include <string.h>
 
 int main(void){
 
@@ -46,18 +50,33 @@ int main(void){
 
 
     // decalre a local array using the lenght global variable.
-    //
+    int shared_array_copy_len = ARRAY_LENGTH / sizeof(int);
+    int *shared_array_copy = malloc(shared_array_copy_len * sizeof(int));
+
+    int memset_status;
     // loop till counter = generations_count:
-    //
-    //     zero out the local array
-    //     call generation_proc upon the local array
-    //
-    //     post the semaphore
-    //     export the array content to the share one
-    //     signal the semaphore
-    //
-    //     continue
-    
+    for (int i =0; i < GENERATIONS_COUNT; i++) {
+        // zero out the local array
+        memset((void*)shared_array_copy, 0, ARRAY_LENGTH);
+
+        // call generation_proc upon the local array
+        rand_nums_freq_analyser(shared_array_copy,shared_array_copy_len, ROUNDS_PER_GENERATION);
+
+        // wait the semaphore
+        sem_wait(global_semaphore);
+
+        // export the local array content to the shared one
+        // we can just use memcpy since they share the same len
+        dot not mem copy the current process results, since this means
+        that we will only keep the last progression, I should rater 
+        increment what was on the share array
+        DOTNOTmemcpy(shared_array, shared_array_copy, ARRAY_LENGTH);
+
+        // signal the semaphore
+        sem_post(global_semaphore);
+
+        // continue
+    }
 
 
     // unmap the shared memory
@@ -75,5 +94,14 @@ int main(void){
 
 
 
+void rand_nums_freq_analyser(int* freqs_store,int freqs_store_len, int generation_cycles_count) {
+    for (int i = 0; i < generation_cycles_count; i++) {
+        int guess = rand() % freqs_store_len;
+        freqs_store[guess]++;
+
+        printf("guess:%d\n", guess);
+    }
+    return;
+}
 
 
