@@ -26,6 +26,9 @@
 // setup our backing file
 #define BACKING_FILE "/shMemEx"
 
+
+float get_random(int seed, int uppper_bound, int lower_bound);
+
 int check_values_uniformity(
     int interval_lower_bound,
     int interval_higher_bound,
