@@ -1,0 +1,3 @@
+- Make sure that there is not data leaks, and that I free everything that is allocated.
+- Comment the code more, reread it.
+- Test and deliver.
