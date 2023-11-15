@@ -9,7 +9,7 @@
 #define GENERATIONS_COUNT  1
 
 // set our global/non-shared sub_process_count
-#define WORKER_PROCESS_COUNT  4
+#define WORKER_PROCESS_COUNT  6
 
 // set our global inner process communication handler/context
 // in our case, it will be the semaphore name

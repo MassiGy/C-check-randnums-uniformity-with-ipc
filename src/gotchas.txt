@@ -1,0 +1,13 @@
++master: fixed error on backing file setup @worker process.
+    
+    The issue was fixed by:
+    - Setting a more permissive set of permissions on the backing file
+    creation.
+    - After spawning all the processes, make sure the @main waits for
+    the @worker child processses to finish before quiting.
+    - Only closing the file descriptor @worker and actually unlink it
+    @main process. Before, I was unlinking it in both of the processes.
+    - Only close the shared semaphore @worker, and actually destroying
+    it in @main file.
+    - Remove/delete all remaining files in /dev/shm/* before rexecuting
+    the program.
