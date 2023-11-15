@@ -5,6 +5,7 @@
 #include <unistd.h>
 #include <sys/mman.h>
 #include <sys/stat.h>       
+#include <sys/wait.h>       
 #include <fcntl.h>       
 #include <string.h>
 
@@ -12,12 +13,13 @@
 int main(void){
 
     int fd = shm_open(
-        BACKING_FILE,       /* backing file pathname, */
-        O_RDWR | O_CREAT,   /* read write operations on backing file, creates it if none */
-        0644                /* r/w permisssion for current user only */
+        BACKING_FILE,               /* backing file pathname, */
+        O_RDWR | O_CREAT,           /* read write operations on backing file, creates it if none */
+        S_IRUSR | S_IWUSR | S_IXUSR /* r/w permisssion for current user only */
     );
+
     if (fd < 0) {
-      fprintf(stderr, "Backing file setup failure.\n");
+      fprintf(stderr, "@Main: Backing file setup failure.\n");
       exit(-1);
     }
 
@@ -35,7 +37,7 @@ int main(void){
     );
 
     if (shared_array == NULL || shared_array == (void *)-1) {
-      fprintf(stderr, "Shared memory setup failure.\n");
+      fprintf(stderr, "@Main: Shared memory setup failure.\n");
       exit(-1);
     }
 
@@ -48,7 +50,7 @@ int main(void){
     );
 
     if (global_semaphore == NULL || (void*) global_semaphore == (void *)-1) {
-      fprintf(stderr, "Shared semaphore setup failure.\n");
+      fprintf(stderr, "@Main: Shared semaphore setup failure.\n");
       exit(-1);
     }
 
@@ -69,7 +71,7 @@ int main(void){
             // exec/replace on top of child the ./worker program
             int status = execlp("./worker", "worker", NULL);
             if(status < 0){
-                fprintf(stderr, "Worker exec after fork failure.\n");
+                fprintf(stderr, "@Main: Worker exec after fork failure.\n");
                 exit(-1);
             }
         }
@@ -77,6 +79,11 @@ int main(void){
         // @parent_process:
         // continue to fork the next sub_process
     }
+
+    for (int i = 0; i < WORKER_PROCESS_COUNT; i++) {
+        wait(NULL);
+    }
+
 
 
     int standard_deviation_value;
@@ -95,7 +102,6 @@ int main(void){
     // print out the results
     // printf("uniformity_check_status is :%d\n", status);
 
-    sleep(5);
     // print the shared array;
     sem_wait(global_semaphore);
     for (int i = 0; i < ARRAY_LENGTH/sizeof(int); i++) {
@@ -108,11 +114,15 @@ int main(void){
     // unmap the shared memory
     munmap(shared_array, ARRAY_LENGTH);
 
+    // close i/o to the backing file
+    close(fd);
+
     // unlink the backing file
     shm_unlink(BACKING_FILE);
 
     // free & destroy the semaphore
     sem_close(global_semaphore);
+    sem_destroy(global_semaphore);
 
     // return and quit
     return 0;

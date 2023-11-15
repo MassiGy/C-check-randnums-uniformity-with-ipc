@@ -1,4 +1,5 @@
 #include "config.h"
+#include <errno.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <semaphore.h>
@@ -11,13 +12,13 @@
 int main(void){
 
     int fd = shm_open(
-        BACKING_FILE,       /* backing file pathname, */
-        O_RDWR,             /* read write operations on backing file, creates it if none */
-        0644                /* r/w permisssion for current user only */
+        BACKING_FILE,               /* backing file pathname, */
+        O_RDWR,                     /* read write operations on backing file, creates it if none */
+        S_IRUSR | S_IWUSR | S_IXUSR /* r/w permisssion for current user only */
     );
     if (fd < 0) {
-      fprintf(stderr, "Backing file setup failure.\n");
-      exit(-1);
+        fprintf(stderr, "@Worker: Backing file setup failure.\n");
+        exit(-1);
     }
 
     // access the shared memory
@@ -31,7 +32,7 @@ int main(void){
     );
 
     if (shared_array == NULL || shared_array == (void *)-1) {
-      fprintf(stderr, "Shared memory setup failure.\n");
+      fprintf(stderr, "@Worker: Shared memory setup failure.\n");
       exit(-1);
     }
 
@@ -44,7 +45,7 @@ int main(void){
     );
 
     if (global_semaphore == NULL || (void*) global_semaphore == (void *)-1) {
-      fprintf(stderr, "Shared semaphore setup failure.\n");
+      fprintf(stderr, "@Worker: Shared semaphore setup failure.\n");
       exit(-1);
     }
 
@@ -66,11 +67,9 @@ int main(void){
         sem_wait(global_semaphore);
 
         // export the local array content to the shared one
-        // we can just use memcpy since they share the same len
-        dot not mem copy the current process results, since this means
-        that we will only keep the last progression, I should rater 
-        increment what was on the share array
-        DOTNOTmemcpy(shared_array, shared_array_copy, ARRAY_LENGTH);
+        for (int i = 0; i < shared_array_copy_len; i++) {
+            ((int *)shared_array)[i] += shared_array_copy[i];
+        }
 
         // signal the semaphore
         sem_post(global_semaphore);
@@ -81,11 +80,11 @@ int main(void){
 
     // unmap the shared memory
     munmap(shared_array, ARRAY_LENGTH);
+    
+    // close i/o to the backing file
+    close(fd);
 
-    // unlink the backing file
-    shm_unlink(BACKING_FILE);
-
-    // destroy/close the semaphore
+    // close the semaphore
     sem_close(global_semaphore);
 
     // return and exit
