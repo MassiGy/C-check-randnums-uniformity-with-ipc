@@ -3,6 +3,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <semaphore.h>
+#include <time.h>
 #include <unistd.h>
 #include <sys/mman.h>
 #include <sys/stat.h>       
@@ -61,7 +62,7 @@ int main(void){
         memset((void*)shared_array_copy, 0, ARRAY_LENGTH);
 
         // call generation_proc upon the local array
-        rand_nums_freq_analyser(shared_array_copy,shared_array_copy_len, ROUNDS_PER_GENERATION);
+        gen_and_register_rand(shared_array_copy,shared_array_copy_len, ROUNDS_PER_GENERATION);
 
         // wait the semaphore
         sem_wait(global_semaphore);
@@ -93,7 +94,14 @@ int main(void){
 
 
 
-void rand_nums_freq_analyser(int* freqs_store,int freqs_store_len, int generation_cycles_count) {
+void gen_and_register_rand(int* freqs_store,int freqs_store_len, int generation_cycles_count) {
+    /* here you can change the values generation */
+
+    // seed rand
+    time_t timer;
+    srand((unsigned)time(&timer));
+
+
     for (int i = 0; i < generation_cycles_count; i++) {
         int guess = rand() % freqs_store_len;
         freqs_store[guess]++;

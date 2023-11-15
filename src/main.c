@@ -81,34 +81,32 @@ int main(void){
     }
 
     for (int i = 0; i < WORKER_PROCESS_COUNT; i++) {
+        // if chld exit with error, ignore and continue
         wait(NULL);
     }
-
-
-
-    int standard_deviation_value;
-    int interval_lower_bound;
-    int interval_higher_bound;
-
-    // init our standard deviation value
-    // call uniformity_check upon the global array
-    // int status = check_values_uniformity(
-    //     interval_lower_bound,
-    //     interval_higher_bound,
-    //     standard_deviation_value,
-    //     (int*)shared_array
-    // );
-
-    // print out the results
-    // printf("uniformity_check_status is :%d\n", status);
-
     // print the shared array;
+    printf("\n[");
     sem_wait(global_semaphore);
     for (int i = 0; i < ARRAY_LENGTH/sizeof(int); i++) {
         printf("%i ",((int*)shared_array)[i]);
     }
-    printf("\n");
     sem_post(global_semaphore);
+    printf("]\n");
+
+
+    // init our standard deviation value
+    int standard_deviation_value;
+
+    // call uniformity_check upon the global array
+    float uniformity_percentage = check_values_uniformity(
+        .1,
+        .05,
+        (int*)shared_array,
+        ARRAY_LENGTH/sizeof(int)
+    );
+
+    // print out the results
+    printf("uniformity_check_status is :%.2f\n", uniformity_percentage);
 
 
     // unmap the shared memory
@@ -128,3 +126,41 @@ int main(void){
     return 0;
 }
         
+
+float check_values_uniformity(
+    float sd,       
+    float compareto_base,
+    int* freqs_store,
+    int freq_store_len
+){
+
+    // calc the sum of freqs
+    int freqs_sum = 0;
+    for (int i = 0; i < freq_store_len; i++) {
+        freqs_sum+= freqs_store[i];
+    }
+
+    // calc the ratio of all vals freq by freqs_sum
+    float* values_freq_ratio = malloc(freq_store_len * sizeof(float));
+    for (int i = 0; i < freq_store_len; i++) {
+        // cast to float by adding 0.0
+        values_freq_ratio[i] = freqs_store[i]/(freqs_sum + 0.00);
+    }
+
+    // check if the ration is between base-sd, base+sd
+    int success_counter = 0;
+    for (int i = 0; i < freq_store_len; i++) {
+        if (values_freq_ratio[i] >= compareto_base - sd ||
+            values_freq_ratio[i] <= compareto_base + sd) {
+
+            // inc counter
+            success_counter++;
+        }
+    }
+
+    // return the pourcentage of success
+    return success_counter * 100 / (freq_store_len + 0.0); 
+}
+
+
+
