@@ -1,1 +1,15 @@
 - Comment the code more, reread it.
+- Optimize for better performance: 
+
+    example: Do we really need to use the semaphore locking here,
+    since all the child process are already out ?
+
+    ``C
+    // print the shared array;
+    printf("\n[");
+    sem_wait(global_semaphore);
+    for (int i = 0; i < ARRAY_LENGTH/sizeof(int); i++) {
+        printf("%i ",((int*)shared_array)[i]);
+    }
+    sem_post(global_semaphore);
+    printf("]\n");
