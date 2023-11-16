@@ -3,10 +3,10 @@
 #define ARRAY_LENGTH  1024
 
 // set our global rounds_per_generation
-#define ROUNDS_PER_GENERATION  1000000
+#define ROUNDS_PER_GENERATION  100
 
 // set our global generations_count
-#define GENERATIONS_COUNT  1000
+#define GENERATIONS_COUNT  10
 
 // set our global/non-shared sub_process_count
 #define WORKER_PROCESS_COUNT  6

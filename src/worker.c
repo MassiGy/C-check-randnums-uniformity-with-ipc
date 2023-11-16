@@ -81,6 +81,10 @@ int main(void){
 
     // unmap the shared memory
     munmap(shared_array, ARRAY_LENGTH);
+
+    // free the allocated ressources
+    free(shared_array_copy);
+    shared_array_copy = NULL;
     
     // close i/o to the backing file
     close(fd);

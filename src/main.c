@@ -99,8 +99,8 @@ int main(void){
 
     // call uniformity_check upon the global array
     float uniformity_percentage = check_values_uniformity(
-        .1,
-        .05,
+        .005,
+        .01,
         (int*)shared_array,
         ARRAY_LENGTH/sizeof(int)
     );
@@ -145,18 +145,23 @@ float check_values_uniformity(
     for (int i = 0; i < freq_store_len; i++) {
         // cast to float by adding 0.0
         values_freq_ratio[i] = freqs_store[i]/(freqs_sum + 0.00);
+        printf("values_freq_ratio[%d]=%f\n", i, values_freq_ratio[i]);
     }
 
     // check if the ration is between base-sd, base+sd
     int success_counter = 0;
     for (int i = 0; i < freq_store_len; i++) {
-        if (values_freq_ratio[i] >= compareto_base - sd ||
+        if (values_freq_ratio[i] >= compareto_base - sd &&
             values_freq_ratio[i] <= compareto_base + sd) {
 
             // inc counter
             success_counter++;
         }
     }
+
+    // free the allocated ressources
+    free(values_freq_ratio);
+    values_freq_ratio = NULL;
 
     // return the pourcentage of success
     return success_counter * 100 / (freq_store_len + 0.0); 
