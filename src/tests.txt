@@ -16,5 +16,26 @@ from that file.
 
 
 Results: 
+    where
+        WORKERS_COUNT = 6
+        GENERATIONS_COUNT = 1000 
+        ROUNDS_PER_GENERATION = 1000_000
+        ARRAY_LEN = 4096 btyes = 1024 ints
+        base = WORKERS_COUNT * GENERATIONS_COUNT * ROUNDS_PER_GENERATION / ARRAY_LEN 
     uniformity status ~ 1% 
+
+
+Observations: 
+
+Do not open and close the file for every number, this will slow the execution trumendensly.
+
+Besides, the results of this test are roughly the same with the rand() and srand() use case 
+shown in the local/master branch, maybe that is because rand() read from the urandom file.
+(Not sure about that, need to lookup for more)
+
+
+
+
+
+
 
