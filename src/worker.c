@@ -9,9 +9,9 @@
 #include <sys/stat.h>       
 #include <fcntl.h>       
 #include <string.h>
+#include <sys/random.h>
 
 int main(void){
-
     int fd = shm_open(
         BACKING_FILE,               /* backing file pathname, */
         O_RDWR,                     /* read write operations on backing file, creates it if none */
@@ -50,8 +50,6 @@ int main(void){
       exit(-1);
     }
 
-    // seed rand (do it once per process execution !)
-    srand(getpid());
 
     // decalre a local array using the lenght global variable.
     int shared_array_copy_len = ARRAY_LENGTH / sizeof(int);
@@ -102,11 +100,19 @@ int main(void){
 void gen_and_register_rand(int* freqs_store,int freqs_store_len, int generation_cycles_count) {
     /* here you can change the values generation */
 
+    unsigned int guess;
     for (int i = 0; i < generation_cycles_count; i++) {
-        int guess = rand() % freqs_store_len;
+
+        // scan 4 bytes to our guess variable
+        getrandom(&guess, sizeof(unsigned int), GRND_RANDOM);
+
+        // get the mod by the len of our store
+        guess = guess % freqs_store_len;  
+        
+        // inc the correct freq
         freqs_store[guess]++;
 
-        // printf("guess:%d\n", guess);
+        printf("guess:%d\n", guess);
     }
     return;
 }
