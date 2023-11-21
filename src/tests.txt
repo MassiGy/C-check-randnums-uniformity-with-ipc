@@ -1,11 +1,8 @@
-On branch local/master:
+On branch local/test-with-getrandom:
 
-In this branch we use rand() and srand() for our random number generation.
-
-In the main function of every worker, we seed the rand() calls with srand()
-by passing the process pid as the seed value. This way we will garentee a 
-diffrent seed value for each process, even though they get executed at the
-same (roughly) time.
+In this branch we use the getrandom function provied in sys/random.h file. This function
+read from the /dev/urandom and the /dev/random file. So the results should be the same as
+the local/test-with-urandom-file.
 
 
 Results:
@@ -16,4 +13,21 @@ Results:
         ARRAY_LEN = 4096 btyes = 1024 ints
         base = WORKERS_COUNT * GENERATIONS_COUNT * ROUNDS_PER_GENERATION / ARRAY_LEN 
     uniformity status ~ 1% 
+
+Observations:
+
+The execution of the program compiled using this branch source code is slower then the
+other branches. That is because the getrandom function is miss-used in our program, and 
+that is because this function read from the file /dev/urandom, and to do so, the function
+takes care of opening and closing the file for each generation. Since we are only asking
+for sizeof(unsigned int) bytes at the time, this means that we open and close that file 
+each time an int value is fetched, which in turnes makes it super slow.
+
+A possible fix, is to read an big blob of random bytes, then cast that blob as an int* and
+for each int found, take the mod of it by the store len and inc its respective freq. Just be
+careful about the preset length that you will assign to your blob of bytes and how to read it.
+
+This is out of the scope of the project, that is why I did not implement it. Besides, since the
+used entropy is the same as the local/test-with-urandom-file, the results shall be the same. 
+(i.e, the used entropy is /dev/urandom)
 
