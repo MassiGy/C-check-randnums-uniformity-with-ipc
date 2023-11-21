@@ -116,9 +116,10 @@ unsigned int custom_rand() {
 void gen_and_register_rand(int* freqs_store,int freqs_store_len, int generation_cycles_count) {
     /* here you can change the values generation */
 
+    int guess;
     for (int i = 0; i < generation_cycles_count; i++) {
 
-        int guess = custom_rand() % freqs_store_len;
+        guess = custom_rand() % freqs_store_len;
         freqs_store[guess]++;
 
         // printf("guess:%d\n", guess);
