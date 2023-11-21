@@ -3,10 +3,10 @@
 #define ARRAY_LENGTH  4096
 
 // set our global rounds_per_generation
-#define ROUNDS_PER_GENERATION  100000
+#define ROUNDS_PER_GENERATION  1000000
 
 // set our global generations_count
-#define GENERATIONS_COUNT  10
+#define GENERATIONS_COUNT  1000
 
 // set our global/non-shared sub_process_count
 #define WORKER_PROCESS_COUNT  6
@@ -43,39 +43,29 @@ void gen_and_register_rand(
 );
 
 /*
-* DISCLAIMER: This is not backed by any real math
-* just out of the top of my head, but seams fairly 
-* right!
-*
-* Steps:
-* check_values_uniformity will help us check if all 
-* our frequences are uniformly spread.
-*
-* The idea is simple, take all the frequencies, calc
-* the sum of all freqs which equals to how many vales
-* are generated.
-*
-* Then, for each value, devide its freq by the sum of 
-* frequencies.
-*
-* Check if the devision result is between compareto_base
-* - sd and compareto_base + sd for each value freq.
-* 
-* if in, inc counter. Then at the end, return conter*100/len
-* to get the pourcentage of uniformity.
-*
-*
-* Notice that this function is agnostic of the random 
-* generation process and do not care at all of the lower
-* and upper bound of the generated values interval. That 
-* is up to you the developer/maintainer to change the 
-* generation function and this one to adapt them. Keep 
-* in mind that the soul purpose of the project is to learn
-* IPC following the POSIX standards.
-*
+ * This function will calculate the 
+ * the max and the min of all the 
+ * freq, and then the diffrence of 
+ * these two.
+ *
+ *
+ * By projecting the value of this
+ * diffrence upon the compareto_base
+ * we get the poucentage of the peak
+ * deviation.
+ *
+ *
+ * Example: 
+ * say that our base is 100
+ * and the max freq is 110
+ * and the min freq is 98
+ *
+ * So the diff is 12,
+ * and 12 makes 12% of 100.
+ *
+ * So this function will return .12
 */
 float check_values_uniformity(
-    float standard_deviation_value,       
     float compareto_base,
     int* freqs_store,
     int freq_store_len

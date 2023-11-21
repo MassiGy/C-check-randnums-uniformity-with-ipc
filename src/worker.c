@@ -10,6 +10,7 @@
 #include <fcntl.h>       
 #include <string.h>
 
+
 int main(void){
 
     int fd = shm_open(
@@ -50,7 +51,7 @@ int main(void){
       exit(-1);
     }
 
-    // seed rand
+    // seed rand (do it once per process execution !)
     srand(getpid());
 
     // decalre a local array using the lenght global variable.
@@ -111,5 +112,4 @@ void gen_and_register_rand(int* freqs_store,int freqs_store_len, int generation_
     }
     return;
 }
-
 

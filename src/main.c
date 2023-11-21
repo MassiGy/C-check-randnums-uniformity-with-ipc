@@ -95,8 +95,7 @@ int main(void){
 
     // call uniformity_check upon the global array
     float uniformity_percentage = check_values_uniformity(
-        .005,
-        .01,
+        (WORKER_PROCESS_COUNT * 1.0 / ARRAY_LENGTH) * ROUNDS_PER_GENERATION * GENERATIONS_COUNT,
         (int*)shared_array,
         ARRAY_LENGTH/sizeof(int)
     );
@@ -124,43 +123,33 @@ int main(void){
         
 
 float check_values_uniformity(
-    float sd,       
     float compareto_base,
     int* freqs_store,
     int freq_store_len
 ){
 
-    // calc the sum of freqs
-    int freqs_sum = 0;
-    for (int i = 0; i < freq_store_len; i++) {
-        freqs_sum+= freqs_store[i];
-    }
+    // find the max and min of freqs_store
+    int max = freqs_store[0];
+    int min = freqs_store[0];
 
-    // calc the ratio of all vals freq by freqs_sum
-    float* values_freq_ratio = malloc(freq_store_len * sizeof(float));
-    for (int i = 0; i < freq_store_len; i++) {
-        // cast to float by adding 0.0
-        values_freq_ratio[i] = freqs_store[i]/(freqs_sum + 0.00);
-        // printf("values_freq_ratio[%d]=%f\n", i, values_freq_ratio[i]);
-    }
-
-    // check if the ration is between base-sd, base+sd
-    int success_counter = 0;
-    for (int i = 0; i < freq_store_len; i++) {
-        if (values_freq_ratio[i] >= compareto_base - sd &&
-            values_freq_ratio[i] <= compareto_base + sd) {
-
-            // inc counter
-            success_counter++;
+    for (int i = 1; i < freq_store_len; i++) {
+        if (freqs_store[i] > max) {
+            max = freqs_store[i];
+        }
+        if(freqs_store[i] < min){
+            min = freqs_store[i];
         }
     }
 
-    // free the allocated ressources
-    free(values_freq_ratio);
-    values_freq_ratio = NULL;
+    // calc the diffrence of the two
+    int amplitude = max - min;
 
-    // return the pourcentage of success
-    return success_counter * 100 / (freq_store_len + 0.0); 
+    // calc the poucentage that the amplitude 
+    // makes regarding the values of the base
+    float amp_pourcentage_of_base = (amplitude + 0.0)/ compareto_base;
+
+    // return that pourcentage
+    return amp_pourcentage_of_base;
 }
 
 
