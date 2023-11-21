@@ -54,9 +54,7 @@ int main(void){
       exit(-1);
     }
 
-    sem_wait(global_semaphore);
     memset(shared_array, 0, ARRAY_LENGTH);
-    sem_post(global_semaphore);
 
     // loop till counter = sub_process_count:
     int pid;
@@ -86,11 +84,9 @@ int main(void){
     }
     // print the shared array;
     printf("\n[");
-    sem_wait(global_semaphore);
     for (int i = 0; i < ARRAY_LENGTH/sizeof(int); i++) {
         printf("%i ",((int*)shared_array)[i]);
     }
-    sem_post(global_semaphore);
     printf("]\n");
 
 
@@ -145,7 +141,7 @@ float check_values_uniformity(
     for (int i = 0; i < freq_store_len; i++) {
         // cast to float by adding 0.0
         values_freq_ratio[i] = freqs_store[i]/(freqs_sum + 0.00);
-        printf("values_freq_ratio[%d]=%f\n", i, values_freq_ratio[i]);
+        // printf("values_freq_ratio[%d]=%f\n", i, values_freq_ratio[i]);
     }
 
     // check if the ration is between base-sd, base+sd

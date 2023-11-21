@@ -50,6 +50,8 @@ int main(void){
       exit(-1);
     }
 
+    // seed rand
+    srand(getpid());
 
     // decalre a local array using the lenght global variable.
     int shared_array_copy_len = ARRAY_LENGTH / sizeof(int);
@@ -101,16 +103,11 @@ int main(void){
 void gen_and_register_rand(int* freqs_store,int freqs_store_len, int generation_cycles_count) {
     /* here you can change the values generation */
 
-    // seed rand
-    time_t timer;
-    srand((unsigned)time(&timer));
-
-
     for (int i = 0; i < generation_cycles_count; i++) {
         int guess = rand() % freqs_store_len;
         freqs_store[guess]++;
 
-        printf("guess:%d\n", guess);
+        // printf("guess:%d\n", guess);
     }
     return;
 }

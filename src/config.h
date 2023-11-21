@@ -1,9 +1,9 @@
 
 // set our global length variable
-#define ARRAY_LENGTH  1024
+#define ARRAY_LENGTH  4096
 
 // set our global rounds_per_generation
-#define ROUNDS_PER_GENERATION  100
+#define ROUNDS_PER_GENERATION  100000
 
 // set our global generations_count
 #define GENERATIONS_COUNT  10
