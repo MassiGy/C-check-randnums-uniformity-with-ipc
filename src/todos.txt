@@ -2,7 +2,7 @@
 - Optimize for better performance: 
 
     example: Do we really need to use the semaphore locking here,
-    since all the child process are already out ?
+    since all the child process are already out ? (this was fixed!)
 
     ``C
     // print the shared array;
@@ -13,3 +13,10 @@
     }
     sem_post(global_semaphore);
     printf("]\n");
+    
+    also, do you need to use the semaphore before any process 
+    was spawned? (this one was fixed!)
+    
+
+
+

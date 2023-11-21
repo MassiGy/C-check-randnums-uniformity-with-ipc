@@ -1,6 +1,4 @@
-+master: fixed error on backing file setup @worker process.
-    
-    The issue was fixed by:
+Be carful about these things:
     - Setting a more permissive set of permissions on the backing file
     creation.
     - After spawning all the processes, make sure the @main waits for
@@ -10,4 +8,10 @@
     - Only close the shared semaphore @worker, and actually destroying
     it in @main file.
     - Remove/delete all remaining files in /dev/shm/* before rexecuting
-    the program.
+    the program (not needed, but appreaciated).
+    - Do not srand() the random number generator in each random generation
+    and when you do it, do not use time since the kernel balancer can launch the
+    processes all in one time, use their pid instead.
+
+
+
