@@ -10,7 +10,7 @@
 #include <fcntl.h>       
 #include <string.h>
 
-FILE * f;
+FILE * urandom_fd;
 int main(void){
 
     int fd = shm_open(
@@ -51,15 +51,13 @@ int main(void){
       exit(-1);
     }
 
-    // seed rand (do it once per process execution !)
-    srand(getpid());
 
     // decalre a local array using the lenght global variable.
     int shared_array_copy_len = ARRAY_LENGTH / sizeof(int);
     int *shared_array_copy = malloc(shared_array_copy_len * sizeof(int));
 
     // open one of the /dev/(u)random files
-    f = fopen("/dev/urandom", "r");
+    urandom_fd = fopen("/dev/urandom", "r");
 
     int memset_status;
     // loop till counter = generations_count:
@@ -84,8 +82,8 @@ int main(void){
         // continue
     }
 
-    // close the file
-    fclose(f);
+    // close the urandom file
+    fclose(urandom_fd);
 
     // unmap the shared memory
     munmap(shared_array, ARRAY_LENGTH);
@@ -108,7 +106,7 @@ unsigned int custom_rand() {
     unsigned int randval;
 
     // read a random slice of byte 
-    fread(&randval, sizeof(randval), 1, f);
+    fread(&randval, sizeof(randval), 1, urandom_fd);
 
     // return the random slice of bytes as uint
     return randval;
@@ -119,7 +117,7 @@ void gen_and_register_rand(int* freqs_store,int freqs_store_len, int generation_
     /* here you can change the values generation */
 
     for (int i = 0; i < generation_cycles_count; i++) {
-        // int guess = rand() % freqs_store_len;
+
         int guess = custom_rand() % freqs_store_len;
         freqs_store[guess]++;
 
