@@ -1,0 +1,20 @@
+on branch local/test-with-urandom-file.
+
+This branch tests the random number generation by reading from 
+the /dev/urandom file.
+
+Keep in mind that the /dev/urandom is more suited for our usecase compared to 
+/dev/random since this one can block our read calls if the demande of random byte
+is higher then the stream of bytes provided by the system at the time.
+
+TL;DR: use /dev/urandom rather then /dev/random since this last one is blocking.
+
+
+The idea behind using this file is to read to a local variable a slice of the generated
+bytes. At the end, we will, as for rand(), check the uniformity of the values scanned 
+from that file.
+
+
+Results: 
+    uniformity status ~ 1% 
+
