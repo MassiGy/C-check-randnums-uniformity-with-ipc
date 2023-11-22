@@ -30,12 +30,7 @@ Observations:
 Do not open and close the file for every number, this will slow the execution trumendensly.
 
 Besides, the results of this test are roughly the same with the rand() and srand() use case 
-shown in the local/master branch, maybe that is because rand() read from the urandom file.
+shown in the local/master branch, that is because rand() read from the urandom file too.
 (Not sure about that, need to lookup for more)
-
-
-
-
-
 
 
