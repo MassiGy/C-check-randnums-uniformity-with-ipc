@@ -9,6 +9,11 @@
 #include <sys/stat.h>       
 #include <fcntl.h>       
 #include <string.h>
+#include "utils.h"
+
+
+// declare a struct related to our choosen pseudo rand num gen
+struct cmwc_state cmwc;
 
 int main(void){
 
@@ -50,8 +55,9 @@ int main(void){
       exit(-1);
     }
 
-    // seed rand (do it once per process execution !)
-    srand(getpid());
+    // seed the multiplication with carray pseudo rand number gen (PNG)
+	unsigned int seed = getpid();
+	initCMWC(&cmwc, seed);
 
     // decalre a local array using the lenght global variable.
     int shared_array_copy_len = ARRAY_LENGTH / sizeof(int);
@@ -103,7 +109,7 @@ void gen_and_register_rand(int* freqs_store,int freqs_store_len, int generation_
     /* here you can change the values generation */
     int guess;
     for (int i = 0; i < generation_cycles_count; i++) {
-        guess = rand() % freqs_store_len;
+        guess =  randCMWC(&cmwc) % freqs_store_len;
         freqs_store[guess]++;
 
         // printf("guess:%d\n", guess);

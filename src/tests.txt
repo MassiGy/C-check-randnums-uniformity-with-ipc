@@ -1,12 +1,11 @@
-On branch local/master:
+SOURCE : https://en.wikipedia.org/wiki/Multiply-with-carry_pseudorandom_number_generator
 
-In this branch we use rand() and srand() for our random number generation.
+On branch local/test-with-multiplication-with-carry-png:
 
-In the main function of every worker, we seed the rand() calls with srand()
-by passing the process pid as the seed value. This way we will garentee a 
-diffrent seed value for each process, even though they get executed at the
-same (roughly) time.
-
+In this branch we use another PNG that uses the multiplication with carry
+principle. You will see that in the results below the outcome of the uniformity
+check is the same as the rand() function since this branch also uses the srand
+function for seed, and then generate values going from that.
 
 Results:
     where
@@ -16,4 +15,8 @@ Results:
         ARRAY_LEN = 4096 btyes = 1024 ints
         base = WORKERS_COUNT * GENERATIONS_COUNT * ROUNDS_PER_GENERATION / ARRAY_LEN 
     uniformity status ~ 1% 
+
+
+Observations: 
+* Do not forget to add the utils.c file for the worker program compilation.
 
