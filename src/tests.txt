@@ -4,8 +4,11 @@ On branch local/test-with-multiplication-with-carry-png:
 
 In this branch we use another PNG that uses the multiplication with carry
 principle. You will see that in the results below the outcome of the uniformity
-check is the same as the rand() function since this branch also uses the srand
-function for seed, and then generate values going from that.
+check is the same as the rand() function since this branch also uses the srand()
+function for seed, and a mix use of rand() and rand32() for the actual generation.
+So in fact, it is the same generation as for the master branch. Nonetheless, this 
+algorithm is still intersting to test since it does a couple of things on top of 
+standard rand().
 
 Results:
     where
@@ -19,4 +22,5 @@ Results:
 
 Observations: 
 * Do not forget to add the utils.c file for the worker program compilation.
+* Same as rand(), this confirms our master tests.
 
