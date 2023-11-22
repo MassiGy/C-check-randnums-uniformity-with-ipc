@@ -1,11 +1,9 @@
-On branch local/master:
+SOURCE: https://en.wikipedia.org/wiki/Lehmer_random_number_generator
 
-In this branch we use rand() and srand() for our random number generation.
+On branch local/test-with-lehmer-prng:
 
-In the main function of every worker, we seed the rand() calls with srand()
-by passing the process pid as the seed value. This way we will garentee a 
-diffrent seed value for each process, even though they get executed at the
-same (roughly) time.
+This branch tests the Lehmer Pseudo random Generator Algorithm. This one does not use the same 
+entropy as rand(), so the results will be diffrent.
 
 
 Results:
@@ -15,5 +13,5 @@ Results:
         ROUNDS_PER_GENERATION = 1000_000
         ARRAY_LEN = 4096 btyes = 1024 ints
         base = WORKERS_COUNT * GENERATIONS_COUNT * ROUNDS_PER_GENERATION / ARRAY_LEN 
-    uniformity status ~ 1% 
+    uniformity status ~ 3% 
 

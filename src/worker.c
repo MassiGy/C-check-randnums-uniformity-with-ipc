@@ -9,6 +9,27 @@
 #include <sys/stat.h>       
 #include <fcntl.h>       
 #include <string.h>
+#include <stdint.h>
+
+
+// declare a global state var
+static unsigned __int128 state;
+
+/* The state must be seeded with an odd value. */
+void seed(unsigned __int128 seed)
+{
+	state = seed << 1 | 1;
+}
+
+uint64_t next(void)
+{
+	// GCC cannot write 128-bit literals, so we use an expression
+	const unsigned __int128 mult =
+		(unsigned __int128)0x12e15e35b500f16e << 64 |
+		0x2e714eb2b37916a5;
+	state *= mult;
+	return state >> 64;
+}
 
 int main(void){
 
@@ -50,8 +71,9 @@ int main(void){
       exit(-1);
     }
 
-    // seed rand (do it once per process execution !)
-    srand(getpid());
+    // seed our Lehmer PRNG, with an arbitrary value
+    seed(1191921817);
+
 
     // decalre a local array using the lenght global variable.
     int shared_array_copy_len = ARRAY_LENGTH / sizeof(int);
@@ -103,7 +125,7 @@ void gen_and_register_rand(int* freqs_store,int freqs_store_len, int generation_
     /* here you can change the values generation */
     int guess;
     for (int i = 0; i < generation_cycles_count; i++) {
-        guess = rand() % freqs_store_len;
+        guess = next() % freqs_store_len;
         freqs_store[guess]++;
 
         // printf("guess:%d\n", guess);
