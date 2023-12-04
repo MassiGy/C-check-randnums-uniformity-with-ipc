@@ -101,7 +101,7 @@ int main(void){
     );
 
     // print out the results
-    printf("uniformity_check_status is :%.2f\n", uniformity_percentage);
+    printf("uniformity_check_status is :%.5f\n", uniformity_percentage);
 
 
     // unmap the shared memory
