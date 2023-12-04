@@ -112,7 +112,7 @@ void gen_and_register_rand(int* freqs_store,int freqs_store_len, int generation_
         // inc the correct freq
         freqs_store[guess]++;
 
-        printf("guess:%d\n", guess);
+        // printf("guess:%d\n", guess);
     }
     return;
 }
