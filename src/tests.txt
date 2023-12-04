@@ -15,5 +15,5 @@ Results:
         ROUNDS_PER_GENERATION = 1000_000
         ARRAY_LEN = 4096 btyes = 1024 ints
         base = WORKERS_COUNT * GENERATIONS_COUNT * ROUNDS_PER_GENERATION / ARRAY_LEN 
-    uniformity status ~ 1% 
+    uniformity status ~ 0.2%
 
