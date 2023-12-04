@@ -95,13 +95,13 @@ int main(void){
 
     // call uniformity_check upon the global array
     float uniformity_percentage = check_values_uniformity(
-        (WORKER_PROCESS_COUNT * 1.0 / ARRAY_LENGTH) * ROUNDS_PER_GENERATION * GENERATIONS_COUNT,
+        (WORKER_PROCESS_COUNT * 1.0 / ARRAY_LENGTH)* sizeof(int) * ROUNDS_PER_GENERATION * GENERATIONS_COUNT,
         (int*)shared_array,
         ARRAY_LENGTH/sizeof(int)
     );
 
     // print out the results
-    printf("uniformity_check_status is :%.2f\n", uniformity_percentage);
+    printf("uniformity_check_status is :%.5f\n", uniformity_percentage);
 
 
     // unmap the shared memory
